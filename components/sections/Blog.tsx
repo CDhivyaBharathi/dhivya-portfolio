@@ -128,7 +128,7 @@ export default function Blog({ posts }: BlogProps) {
         marginBottom: "2.5rem",
         lineHeight: 1.1,
       }}>
-        Blog.
+        Blog - Scratchspace.
       </h2>
 
       {posts.length === 0 ? (

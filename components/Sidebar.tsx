@@ -8,7 +8,7 @@ const NAV_ITEMS: { id: Section; label: string }[] = [
   { id: "about", label: "About." },
   { id: "projects", label: "Projects." },
   { id: "experience", label: "Experience." },
-  { id: "blog", label: "Blog." },
+  { id: "blog", label: "Blog - Scratchspace." },
   { id: "contact", label: "Contact." },
 ];
 
