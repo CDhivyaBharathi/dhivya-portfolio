@@ -11,9 +11,11 @@ import Experience from "./sections/Experience";
 import Blog from "./sections/Blog";
 import Contact from "./sections/Contact";
 import type { Post } from "../lib/posts";
+import type { Project } from "../lib/projects";
 
 interface SplitLayoutProps {
   posts: Post[];
+  projects: Project[];
 }
 
 function Hamburger({ onClick }: { onClick: () => void }) {
@@ -77,7 +79,7 @@ function DarkToggle({ dark, onToggle }: { dark: boolean; onToggle: () => void })
   );
 }
 
-export default function SplitLayout({ posts }: SplitLayoutProps) {
+export default function SplitLayout({ posts, projects }: SplitLayoutProps) {
   const [active, setActive] = useState<Section>("about");
   const [dark, setDark] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -92,9 +94,11 @@ export default function SplitLayout({ posts }: SplitLayoutProps) {
     return () => { document.body.style.overflow = ""; };
   }, [drawerOpen]);
 
+  const projectsGridStyle = active === "projects" ? { backgroundImage: `linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)`, backgroundSize: "32px 32px" } : {};
+
   const SECTIONS: Record<Section, React.ReactNode> = {
     about: <About />,
-    projects: <Projects />,
+    projects: <Projects projects={projects} />,
     experience: <Experience />,
     blog: <Blog posts={posts} />,
     contact: <Contact />,
@@ -141,7 +145,7 @@ export default function SplitLayout({ posts }: SplitLayoutProps) {
           onDrawerClose={() => setDrawerOpen(false)}
         />
 
-        <main style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+        <main style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch", background: "var(--cream)", ...projectsGridStyle }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={active}
@@ -149,7 +153,7 @@ export default function SplitLayout({ posts }: SplitLayoutProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              style={{ padding: "2rem 1.25rem 3rem" }}
+              style={{ padding: "1.5rem", minHeight: "100%", display: "flex", flexDirection: "column" }}
             >
               {SECTIONS[active]}
             </motion.div>
@@ -168,7 +172,7 @@ export default function SplitLayout({ posts }: SplitLayoutProps) {
     >
       <Sidebar active={active} onSelect={setActive} desktop />
 
-      <main style={{ flex: 1, background: "var(--cream)", overflowY: "auto", position: "relative" }}>
+      <main style={{ flex: 1, background: "var(--cream)", overflowY: "auto", position: "relative", ...projectsGridStyle }}>
         <div style={{ position: "absolute", top: "1.75rem", right: "2rem" }}>
           <DarkToggle dark={dark} onToggle={() => setDark((d) => !d)} />
         </div>
@@ -180,7 +184,7 @@ export default function SplitLayout({ posts }: SplitLayoutProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            style={{ padding: "3.5rem 3rem", minHeight: "100%" }}
+            style={{ padding: "3rem", minHeight: "100%", display: "flex", flexDirection: "column" }}
           >
             {SECTIONS[active]}
           </motion.div>

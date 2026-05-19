@@ -10,8 +10,8 @@ function PostBody({ content }: { content: string }) {
   return (
     <div style={{ fontFamily: FONT, fontWeight: 300, fontSize: "0.95rem", color: "var(--text-dark)", lineHeight: 1.9, display: "flex", flexDirection: "column", gap: "1.25rem" }}>
       {paragraphs.map((p, i) => {
-        if (p.startsWith("## ")) return <h2 key={i} style={{ fontWeight: 500, fontSize: "1.15rem", marginTop: "1rem" }}>{p.slice(3)}</h2>;
-        if (p.startsWith("### ")) return <h3 key={i} style={{ fontWeight: 500, fontSize: "1rem", marginTop: "0.5rem" }}>{p.slice(4)}</h3>;
+        if (p.startsWith("## ")) return <h2 key={i} style={{ fontWeight: 500, fontSize: "1.15rem", lineHeight: 1.3 }}>{p.slice(3)}</h2>;
+        if (p.startsWith("### ")) return <h3 key={i} style={{ fontWeight: 500, fontSize: "1rem" }}>{p.slice(4)}</h3>;
         if (p.startsWith("- ")) {
           const items = p.split("\n").map((l) => l.replace(/^- /, ""));
           return <ul key={i} style={{ paddingLeft: "1.25rem", display: "flex", flexDirection: "column", gap: "0.35rem" }}>{items.map((item, j) => <li key={j}>{item}</li>)}</ul>;
@@ -25,7 +25,7 @@ function PostBody({ content }: { content: string }) {
 function PostView({ post, onBack }: { post: Post; onBack: () => void }) {
   return (
     <div>
-      <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", fontFamily: FONT, fontWeight: 300, fontSize: "0.78rem", color: "var(--text-dark)", letterSpacing: "0.06em", padding: 0, marginBottom: "2.5rem", opacity: 0.6, transition: "opacity 0.15s ease" }}
+      <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", fontFamily: FONT, fontWeight: 300, fontSize: "0.78rem", color: "var(--text-dark)", letterSpacing: "0.06em", padding: 0, marginBottom: "2.5rem", opacity: 0.6, transition: "opacity 0.15s ease", display: "block" }}
         onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.opacity = "1")}
         onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.opacity = "0.6")}
       >
@@ -46,7 +46,7 @@ function PostRow({ post, onClick }: { post: Post; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      style={{ background: "none", border: "none", borderTop: "1px solid rgba(10, 9, 7, 0.2)", cursor: "pointer", textAlign: "left", padding: "1.1rem 0", display: "flex", flexDirection: "column", gap: "0.3rem", transition: "opacity 0.15s ease", width: "100%" }}
+      style={{ background: "none", border: "none", borderTop: "1px solid rgba(10,9,7,0.2)", cursor: "pointer", textAlign: "left", padding: "1.1rem 0", display: "flex", flexDirection: "column", gap: "0.3rem", transition: "opacity 0.15s ease", width: "100%" }}
       onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.opacity = "0.6")}
       onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.opacity = "1")}
     >
@@ -66,14 +66,12 @@ export default function Blog({ posts }: { posts: Post[] }) {
 
   if (activePost) return <PostView post={activePost} onBack={() => setActivePost(null)} />;
 
-  // Group by tag, uncategorised last
   const groups = new Map<string, Post[]>();
   for (const post of posts) {
     const key = post.tag ?? "__none__";
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key)!.push(post);
   }
-  // Sort groups: named tags alphabetically, uncategorised last
   const sortedGroups = [...groups.entries()].sort(([a], [b]) => {
     if (a === "__none__") return 1;
     if (b === "__none__") return -1;
@@ -85,7 +83,6 @@ export default function Blog({ posts }: { posts: Post[] }) {
       <h2 style={{ fontFamily: FONT, fontWeight: 500, fontSize: "clamp(2rem, 4vw, 2.75rem)", color: "var(--text-dark)", marginBottom: "2.5rem", lineHeight: 1.1 }}>
         Blog - Scratchspace.
       </h2>
-
       {posts.length === 0 ? (
         <p style={{ fontFamily: FONT, fontWeight: 300, fontSize: "1rem", color: "var(--text-dark)", lineHeight: 1.85 }}>
           Coming soon.<br />Writing about things I&apos;m building and learning.
@@ -95,7 +92,7 @@ export default function Blog({ posts }: { posts: Post[] }) {
           {sortedGroups.map(([key, groupPosts]) => (
             <div key={key}>
               {key !== "__none__" && (
-                <p style={{ fontFamily: FONT, fontWeight: 300, fontSize: "0.7rem", color: "var(--text-dark)", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
+                <p style={{ fontFamily: FONT, fontWeight: 300, fontSize: "0.7rem", color: "var(--text-dark)", letterSpacing: "0.08em", marginBottom: "0" }}>
                   {key}
                 </p>
               )}
@@ -103,7 +100,7 @@ export default function Blog({ posts }: { posts: Post[] }) {
                 {groupPosts.map((post) => (
                   <PostRow key={post.slug} post={post} onClick={() => setActivePost(post)} />
                 ))}
-                <div style={{ borderTop: "1px solid rgba(10, 9, 7, 0.2)" }} />
+                <div style={{ borderTop: "1px solid rgba(10,9,7,0.2)" }} />
               </div>
             </div>
           ))}

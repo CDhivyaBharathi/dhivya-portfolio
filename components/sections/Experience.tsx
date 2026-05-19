@@ -76,7 +76,7 @@ function EntryBlock({
           fontWeight: 500,
           fontSize: "0.95rem",
           color: "var(--text-dark)",
-          marginBottom: "0.2rem",
+          marginBottom: "0.35rem",
         }}
       >
         {role}.
@@ -87,7 +87,7 @@ function EntryBlock({
           fontWeight: 300,
           fontSize: "0.82rem",
           color: "var(--text-dark)",
-          marginBottom: type && lines.length > 0 ? "0.15rem" : type ? "0" : "0.5rem",
+          marginBottom: "0.35rem",
         }}
       >
         {org}.
@@ -99,7 +99,8 @@ function EntryBlock({
             fontWeight: 300,
             fontSize: "0.72rem",
             color: "var(--text-dark)",
-            marginBottom: lines.length > 0 ? "0.5rem" : "0",
+            lineHeight: 1.7,
+            marginBottom: "0",
           }}
         >
           {type}.
