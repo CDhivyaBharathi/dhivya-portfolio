@@ -11,47 +11,56 @@ export interface PostMeta {
   date: string;
   excerpt: string;
   readingTime: string;
+  tag: string | null; // subfolder name, or null if at root
 }
 
 export interface Post extends PostMeta {
   content: string;
 }
 
-export function getAllPostsFull(): Post[] {
-  const files = fs.readdirSync(POSTS_DIR).filter((f) => f.endsWith(".mdx"));
-  return files
-    .map((file) => getPost(file.replace(/\.mdx$/, "")))
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
+// Recursively collect all .mdx files with their subfolder as the tag
+function collectFiles(): { filePath: string; tag: string | null }[] {
+  const results: { filePath: string; tag: string | null }[] = [];
+
+  const entries = fs.readdirSync(POSTS_DIR, { withFileTypes: true });
+
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      const tag = entry.name;
+      const subDir = path.join(POSTS_DIR, tag);
+      const subFiles = fs.readdirSync(subDir).filter((f) => f.endsWith(".mdx"));
+      for (const file of subFiles) {
+        results.push({ filePath: path.join(subDir, file), tag });
+      }
+    } else if (entry.isFile() && entry.name.endsWith(".mdx")) {
+      results.push({ filePath: path.join(POSTS_DIR, entry.name), tag: null });
+    }
+  }
+
+  return results;
 }
 
-export function getAllPosts(): PostMeta[] {
-  const files = fs.readdirSync(POSTS_DIR).filter((f) => f.endsWith(".mdx"));
-
-  return files
-    .map((file) => {
-      const slug = file.replace(/\.mdx$/, "");
-      const raw = fs.readFileSync(path.join(POSTS_DIR, file), "utf-8");
-      const { data, content } = matter(raw);
-      return {
-        slug,
-        title: data.title ?? slug,
-        date: data.date ? new Date(data.date).toISOString().split("T")[0] : "",
-        excerpt: data.excerpt ?? "",
-        readingTime: readingTime(content).text,
-      };
-    })
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
-}
-
-export function getPost(slug: string): Post {
-  const raw = fs.readFileSync(path.join(POSTS_DIR, `${slug}.mdx`), "utf-8");
+function parseFile(filePath: string, tag: string | null): Post {
+  const raw = fs.readFileSync(filePath, "utf-8");
   const { data, content } = matter(raw);
+  const slug = path.basename(filePath, ".mdx");
   return {
     slug,
     title: data.title ?? slug,
     date: data.date ? new Date(data.date).toISOString().split("T")[0] : "",
     excerpt: data.excerpt ?? "",
     readingTime: readingTime(content).text,
+    tag,
     content,
   };
+}
+
+export function getAllPostsFull(): Post[] {
+  return collectFiles()
+    .map(({ filePath, tag }) => parseFile(filePath, tag))
+    .sort((a, b) => (a.date < b.date ? 1 : -1));
+}
+
+export function getAllPosts(): PostMeta[] {
+  return getAllPostsFull().map(({ content: _content, ...meta }) => meta);
 }
