@@ -1,0 +1,64 @@
+@import url("https://fonts.googleapis.com/css2?family=Intel+One+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap");
+@import "tailwindcss";
+
+:root {
+  --cream:      #EDE8D0;
+  --white:      #FFFFFF;
+  --sidebar:    #4F4D46;
+  --sidebar-2:  #787569;
+  --text-dark:  #0a0907;
+  --text-muted: #0a0907;
+  --text-light: #0a0907;
+
+  --lavender:   #A5AED7;
+  --mint:       #D0EDDA;
+  --pink:       #CC89B7;
+
+  /* Sidebar text — always on a dark bg, so fixed to cream-based values */
+  --sidebar-text:        rgba(237, 232, 208, 0.65);
+  --sidebar-text-hover:  #EDE8D0;
+  --sidebar-text-active: #EDE8D0;
+}
+
+html.dark {
+  --cream:      #1c1a16;
+  --sidebar:    #0f0e0c;
+  --sidebar-2:  #2a2825;
+  --text-dark:  #EDE8D0;
+  --text-muted: #EDE8D0;
+  --text-light: #EDE8D0;
+
+  --sidebar-text:        rgba(237, 232, 208, 0.45);
+  --sidebar-text-hover:  #EDE8D0;
+  --sidebar-text-active: #EDE8D0;
+}
+
+@theme inline {
+  --font-mono: "Intel One Mono", monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--cream);
+  color: var(--text-dark);
+  font-family: "Intel One Mono", monospace;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 768px) {
+  html { font-size: 15px; }
+}
