@@ -10,14 +10,11 @@ import Projects from "./sections/Projects";
 import Experience from "./sections/Experience";
 import Blog from "./sections/Blog";
 import Contact from "./sections/Contact";
+import type { Post } from "../lib/posts";
 
-const SECTIONS: Record<Section, React.ReactNode> = {
-  about: <About />,
-  projects: <Projects />,
-  experience: <Experience />,
-  blog: <Blog />,
-  contact: <Contact />,
-};
+interface SplitLayoutProps {
+  posts: Post[];
+}
 
 function Hamburger({ onClick }: { onClick: () => void }) {
   return (
@@ -80,7 +77,7 @@ function DarkToggle({ dark, onToggle }: { dark: boolean; onToggle: () => void })
   );
 }
 
-export default function SplitLayout() {
+export default function SplitLayout({ posts }: SplitLayoutProps) {
   const [active, setActive] = useState<Section>("about");
   const [dark, setDark] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -90,11 +87,18 @@ export default function SplitLayout() {
     document.documentElement.classList.toggle("dark", dark);
   }, [dark]);
 
-  // Lock body scroll when drawer is open
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [drawerOpen]);
+
+  const SECTIONS: Record<Section, React.ReactNode> = {
+    about: <About />,
+    projects: <Projects />,
+    experience: <Experience />,
+    blog: <Blog posts={posts} />,
+    contact: <Contact />,
+  };
 
   if (isMobile) {
     return (
@@ -104,7 +108,6 @@ export default function SplitLayout() {
         transition={{ duration: 0.35 }}
         style={{ display: "flex", flexDirection: "column", height: "100dvh", background: "var(--cream)" }}
       >
-        {/* Mobile top bar */}
         <div
           style={{
             display: "flex",
@@ -131,7 +134,6 @@ export default function SplitLayout() {
           <DarkToggle dark={dark} onToggle={() => setDark((d) => !d)} />
         </div>
 
-        {/* Drawer */}
         <Sidebar
           active={active}
           onSelect={setActive}
@@ -139,7 +141,6 @@ export default function SplitLayout() {
           onDrawerClose={() => setDrawerOpen(false)}
         />
 
-        {/* Scrollable content */}
         <main style={{ flex: 1, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
           <AnimatePresence mode="wait">
             <motion.div
