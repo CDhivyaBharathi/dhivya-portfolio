@@ -4,11 +4,11 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type Section = "about" | "projects" | "experience" | "blog" | "contact";
 
-const NAV_ITEMS: { id: Section; label: string }[] = [
+const NAV_ITEMS: { id: Section; label: string; href?: string }[] = [
   { id: "about", label: "About." },
   { id: "projects", label: "Projects." },
   { id: "experience", label: "Experience." },
-  { id: "blog", label: "Blog - Scratchspace." },
+  { id: "blog", label: "Blog - Scratchspace.", href: "https://blog.dhivyabharathi.com" },
   { id: "contact", label: "Contact." },
 ];
 
@@ -32,23 +32,38 @@ export default function Sidebar({
   const navLinks = (onClick: (id: Section) => void, fontSize: string) =>
     NAV_ITEMS.map((item) => {
       const isActive = active === item.id;
+      const sharedStyle = {
+        fontFamily: "var(--font-mono, 'Intel One Mono', monospace)",
+        fontWeight: 400,
+        fontSize,
+        color: isActive ? "var(--sidebar-text-active)" : "var(--sidebar-text)",
+        padding: "0.35rem 0",
+        transition: "color 0.15s ease",
+        letterSpacing: "0.01em",
+        display: "block",
+        textDecoration: "none",
+        cursor: "pointer",
+      };
+
+      if (item.href) {
+        return (
+          <a
+            key={item.id}
+            href={item.href}
+              style={sharedStyle}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "var(--sidebar-text-hover)")}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "var(--sidebar-text)")}
+          >
+            {item.label}
+          </a>
+        );
+      }
+
       return (
         <button
           key={item.id}
           onClick={() => onClick(item.id)}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            textAlign: "left",
-            fontFamily: "var(--font-mono, 'Intel One Mono', monospace)",
-            fontWeight: 400,
-            fontSize,
-            color: isActive ? "var(--sidebar-text-active)" : "var(--sidebar-text)",
-            padding: "0.35rem 0",
-            transition: "color 0.15s ease",
-            letterSpacing: "0.01em",
-          }}
+          style={{ ...sharedStyle, background: "none", border: "none", textAlign: "left" }}
           onMouseEnter={(e) => {
             if (!isActive)
               (e.currentTarget as HTMLButtonElement).style.color = "var(--sidebar-text-hover)";
